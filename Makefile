@@ -6,13 +6,13 @@
 #    By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/10/14 22:55:02 by llage             #+#    #+#              #
-#    Updated: 2025/04/30 13:38:46 by llage            ###   ########.fr        #
+#    Updated: 2025/04/30 19:22:13 by llage            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 .PHONY: all clean fclean re bonus
 
-GREEN = \033[1;32mA
+GREEN = \033[1;32m
 BLUE = \033[1;34m
 RED = \033[1;31m
 RESET = \033[0m
