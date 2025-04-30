@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re bonus slow
+.PHONY: all clean fclean re bonus debug
 
 GREEN = \033[1;32m
 BLUE = \033[1;34m
@@ -20,7 +20,6 @@ RESET = \033[0m
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -O3 -ffast-math -march=native -flto
 NAME = so_long
-DEPS = includes
 SRC = src
 OBJ = obj
 
@@ -30,16 +29,16 @@ OBJS := $(patsubst $(SRC)/%,$(OBJ)/%,$(SRCS:.c=.o))
 
 all: $(NAME)
 
+$(OBJ)/%.o: $(SRC)/%.c
+	@mkdir -p $(@D)
+	@echo "$(BLUE)Compiling$(RESET) $<..."
+	@$(CC) $(CFLAGS) -Iincludes -Ilibft/includes -IMacroLibX/includes -c $< -o $@
+
 libft/libft.a:
 	@$(MAKE) -s -C libft
 
 MacroLibX/libmlx.so:
 	@$(MAKE) -s -C MacroLibX
-
-$(OBJ)/%.o: $(SRC)/%.c $(DEPS)
-	@mkdir -p $(@D)
-	@echo "$(BLUE)Compiling$(RESET) $<..."
-	@$(CC) $(CFLAGS) -I$(DEPS) -Ilibft/includes -IMacroLibX/includes -c $< -o $@
 
 $(NAME): $(OBJS) libft/libft.a MacroLibX/libmlx.so
 	@echo "$(GREEN)Linking$(RESET) $@..."
@@ -55,13 +54,14 @@ fclean: clean
 	@echo "$(RED)Removing$(RESET) $(NAME)..."
 	@rm -f $(NAME)
 	@$(MAKE) -s -C libft fclean
+	@$(MAKE) -s -C MacroLibX fclean
 
 re: fclean
 	@$(MAKE) --no-print-directory all
 
 bonus: all
 
-slow:
-	@echo "$(RED)Compiling in slow mode$(RESET) slowly but steady I get it..."
-	@$(MAKE) --no-print-directory all CFLAGS="$(CFLAGS) -O0 -fno-builtin -g"
+debug:
+	@echo "$(GREEN)DEBUG$(RESET)"
+	@$(MAKE) --no-print-directory all CFLAGS="-Wall -Wextra -O0 -fno-builtin -g"
 
