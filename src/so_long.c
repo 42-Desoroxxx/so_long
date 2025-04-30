@@ -23,5 +23,6 @@ int	main(void)
 	info.width = 1280;
 	info.height = 720;
 	window = mlx_new_window(mlx, &info);
+	(void)window;
 	mlx_loop(mlx);
 }

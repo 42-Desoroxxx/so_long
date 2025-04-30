@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re bonus slow
 
 GREEN = \033[1;32m
 BLUE = \033[1;34m
@@ -57,3 +57,8 @@ re: fclean
 	@$(MAKE) --no-print-directory all
 
 bonus: all
+
+slow:
+	@echo "$(RED)Compiling in slow mode$(RESET) slowly but steady I get it..."
+	@$(MAKE) --no-print-directory all CFLAGS="$(CFLAGS) -O0 -fno-builtin -g"
+
