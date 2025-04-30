@@ -1,6 +1,18 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/10/14 22:55:02 by llage             #+#    #+#              #
+#    Updated: 2025/04/30 13:38:46 by llage            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 .PHONY: all clean fclean re bonus
 
-GREEN = \033[1;32m
+GREEN = \033[1;32mA
 BLUE = \033[1;34m
 RED = \033[1;31m
 RESET = \033[0m
@@ -12,7 +24,7 @@ DEPS = includes
 SRC = src
 OBJ = obj
 
-SRC_FILES := so_long
+SRC_FILES := so_long.c
 SRCS := $(addprefix $(SRC)/,$(SRC_FILES))
 OBJS := $(patsubst $(SRC)/%,$(OBJ)/%,$(SRCS:.c=.o))
 
@@ -24,11 +36,11 @@ libft/libft.a:
 $(OBJ)/%.o: $(SRC)/%.c $(DEPS)
 	@mkdir -p $(@D)
 	@echo "$(BLUE)Compiling$(RESET) $<..."
-	@$(CC) $(CFLAGS) -I$(DEPS) -Ilibft/includes -c $< -o $@
+	@$(CC) $(CFLAGS) -I$(DEPS) -Ilibft/includes -IMacroLibX/includes -c $< -o $@
 
 $(NAME): $(OBJS) libft/libft.a
 	@echo "$(GREEN)Linking$(RESET) $@..."
-	@$(CC) $(CFLAGS) $^ -o $@
+	@$(CC) $(CFLAGS) $^ -o $@ MacroLibX/libmlx.so -lSDL2
 	@echo "$(GREEN)Done!$(RESET)"
 
 clean:

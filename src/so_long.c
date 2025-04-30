@@ -1,18 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   str_utils.c                                        :+:      :+:    :+:   */
+/*   so_long.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/22 10:48:08 by llage             #+#    #+#             */
-/*   Updated: 2025/04/22 11:32:51 by llage            ###   ########.fr       */
+/*   Created: 2025/04/30 13:38:46 by llage             #+#    #+#             */
+/*   Updated: 2025/04/30 13:38:46 by llage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const char	*skip_whitespace(const char *str)
+#include <so_long.h>
+
+int	main(void)
 {
-	while (*str == ' ' || (*str >= '\t' && *str <= '\r'))
-		str++;
-	return (str);
+	const mlx_context		mlx = mlx_init();
+	mlx_window_create_info	info;
+	mlx_window				window;
+
+	ft_printf("Hello World!\n");
+	info.title = "so_long";
+	info.width = 1280;
+	info.height = 720;
+	window = mlx_new_window(mlx, &info);
+	mlx_loop(mlx);
 }
