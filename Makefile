@@ -33,14 +33,17 @@ all: $(NAME)
 libft/libft.a:
 	@$(MAKE) -s -C libft
 
+MacroLibX/libmlx.so:
+	@$(MAKE) -s -C MacroLibX
+
 $(OBJ)/%.o: $(SRC)/%.c $(DEPS)
 	@mkdir -p $(@D)
 	@echo "$(BLUE)Compiling$(RESET) $<..."
 	@$(CC) $(CFLAGS) -I$(DEPS) -Ilibft/includes -IMacroLibX/includes -c $< -o $@
 
-$(NAME): $(OBJS) libft/libft.a
+$(NAME): $(OBJS) libft/libft.a MacroLibX/libmlx.so
 	@echo "$(GREEN)Linking$(RESET) $@..."
-	@$(CC) $(CFLAGS) $^ -o $@ MacroLibX/libmlx.so -lSDL2
+	@$(CC) $(CFLAGS) $^ -o $@ -lSDL2
 	@echo "$(GREEN)Done!$(RESET)"
 
 clean:
