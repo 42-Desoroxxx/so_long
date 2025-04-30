@@ -10,7 +10,8 @@
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all clean fclean re bonus debug debug_libft debug_mlx
+
+.PHONY: all clean fclean re bonus debug libs libs_debug
 
 # Colors
 GREEN = \033[1;32m
@@ -47,6 +48,16 @@ $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	@echo "$(BLUE)Compiling$(RESET) $<..."
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
+libs:
+	@echo "$(BLUE)Building libraries...$(RESET)"
+	@$(MAKE) -s -C libft
+	@$(MAKE) -s -C MacroLibX
+
+libs_debug:
+	@echo "$(BLUE)Building libraries in debug mode...$(RESET)"
+	@$(MAKE) -s -C libft debug
+	@$(MAKE) -s -C MacroLibX debug
+
 libft/libft.a:
 	@$(MAKE) -s -C libft
 
@@ -74,14 +85,7 @@ re: fclean all
 
 bonus: all
 
-debug_libft:
-	@$(MAKE) -s -C libft debug
-
-debug_mlx:
-	@$(MAKE) -s -C MacroLibX debug
-
-debug: CFLAGS = $(DEBUG_FLAGS)
-debug: debug_libft debug_mlx
-	@echo "$(GREEN)DEBUG$(RESET)"
-	@$(MAKE) --no-print-directory all
-
+debug:
+	@echo "$(GREEN)Building in debug mode$(RESET)"
+	@$(MAKE) --no-print-directory libs_debug
+	@$(MAKE) --no-print-directory all CFLAGS="$(DEBUG_FLAGS)"
