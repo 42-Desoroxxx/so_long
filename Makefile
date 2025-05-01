@@ -19,7 +19,7 @@
 #    / // / /// //  /// / / // //   //  /// //  /  ///  //  // /// / /  ///   /   / ///  //  #
 ##############################################################################################
 
-.PHONY: all clean fclean re bonus debug
+.PHONY: all debug clean fclean re re_debug bonus
 
 NAME = so_long
 MODE ?= release
@@ -42,15 +42,15 @@ else
     LIB_TARGET = all
 endif
 
+# Libraries
+LIB_DIRS = libft MacroLibX
+LIB_FILES = libft/libft.a MacroLibX/libmlx.so
+LDFLAGS = -lSDL2
 
 # Directories
-INCLUDES = -Iincludes -Ilibft/includes -IMacroLibX/includes
 SRC = src
 OBJ = obj
-
-# Libraries
-LIBS = libft/libft.a MacroLibX/libmlx.so
-LDFLAGS = -lSDL2
+INCLUDES = -Iincludes $(foreach lib,$(LIB_DIRS),-I$(lib)/includes)
 
 # Sources
 SRC_FILES := so_long.c
@@ -59,8 +59,12 @@ OBJS := $(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(SRCS))
 
 all: $(NAME)
 
+debug:
+	@echo "$(GREEN)Building in debug mode$(RESET)"
+	@$(MAKE) --no-print-directory MODE=debug
+
 $(OBJ):
-	@mkdir -p $@
+	@mkdir -p $@ $(dir $(OBJS))
 
 $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	@echo "$(BLUE)Compiling$(RESET) $<..."
@@ -68,30 +72,31 @@ $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 
 libs:
 	@echo "$(BLUE)Building libraries in $(MODE) mode...$(RESET)"
-	@$(MAKE) --no-print-directory -C libft $(LIB_TARGET)
-	@$(MAKE) --no-print-directory -C MacroLibX $(LIB_TARGET)
+	@for lib in $(LIB_DIRS); do \
+		$(MAKE) --no-print-directory -C $$lib $(LIB_TARGET); \
+	done
 
 $(NAME): $(OBJS) | libs
 	@echo "$(GREEN)Linking$(RESET) $@..."
-	@$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $@ $(LDFLAGS)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIB_FILES) -o $@ $(LDFLAGS)
 	@echo "$(GREEN)Successfully compiled $(NAME)!$(RESET)"
 
 clean:
 	@echo "$(RED)Cleaning$(RESET) $(NAME)'s object files..."
 	@rm -rf $(OBJ)
-	@$(MAKE) --no-print-directory -s -C libft clean
-	@$(MAKE) --no-print-directory -s -C MacroLibX clean
+	@for lib in $(LIB_DIRS); do \
+		$(MAKE) --no-print-directory -s -C $$lib clean; \
+	done
 
 fclean: clean
 	@echo "$(RED)Removing$(RESET) $(NAME)..."
 	@rm -f $(NAME)
-	@$(MAKE) --no-print-directory -s -C libft fclean
-	@$(MAKE) --no-print-directory -s -C MacroLibX fclean
+	@for lib in $(LIB_DIRS); do \
+		$(MAKE) --no-print-directory -s -C $$lib fclean; \
+	done
 
 re: fclean all
 
-bonus: all
+re_debug: fclean debug
 
-debug:
-	@echo "$(GREEN)Building in debug mode$(RESET)"
-	@$(MAKE) --no-print-directory MODE=debug
+bonus: all
