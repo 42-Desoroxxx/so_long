@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/10/14 22:55:02 by llage             #+#    #+#              #
-#    Updated: 2025/04/30 19:22:13 by llage            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 ##############################################################################################
 #                                                                                            #
 #   /$$$$$$                                      /$$      /$$           /$$                  #
@@ -19,9 +7,9 @@
 # | $$      | $$  \ $$   /$$$$/ | $$  | $$      | $$  $$$| $$  /$$$$$$$| $$$$$$/ | $$$$$$$$  #
 # | $$    $$| $$  | $$  /$$__/  | $$  | $$      | $$\  $ | $$ /$$__  $$| $$_  $$ | $$_____/  #
 # |  $$$$$$/|  $$$$$$/ /$$$$$$$$|  $$$$$$$      | $$ \/  | $$|  $$$$$$$| $$ \  $$|  $$$$$$$  #
-#   \______/  \______/ |________/ \____  $$      |__/     |__/ \_______/|__/  \__/ \_______/ #
+#  \______/  \______/ |________/ \____  $$      |__/     |__/ \_______/|__/  \__/ \_______/  #
 #                                /$$  | $$                                                   #
-#        )))                   |  $$$$$$/                                                    #
+#        )))                    |  $$$$$$/                                    Version 1.0    #
 #       (((                      \______/                                                    #
 #     +-----+                                   __..--''``---....___   _..._    __           #
 #     |     |]      /    //    // //  /// //_.-'    .-/";  `        ``<._  ``.''_ `. / // /  #
@@ -30,9 +18,11 @@
 #     ///  //  /  /       // ///  /   / // // //  `-._,_)' // / ``--...____..-' /// / //     #
 #    / // / /// //  /// / / // //   //  /// //  /  ///  //  // /// / /  ///   /   / ///  //  #
 ##############################################################################################
-.PHONY: all clean fclean re bonus debug libs_debug
+
+.PHONY: all clean fclean re bonus debug
 
 NAME = so_long
+MODE ?= release
 
 # Colors
 GREEN = \033[1;32m
@@ -42,8 +32,16 @@ RESET = \033[0m
 
 # Compiler
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -O3 -ffast-math -march=native -flto
+RELEASE_FLAGS = -Wall -Wextra -Werror -O3 -ffast-math -march=native -flto
 DEBUG_FLAGS = -Wall -Wextra -O0 -fno-builtin -g
+ifeq ($(MODE),debug)
+    CFLAGS = $(DEBUG_FLAGS)
+    LIB_TARGET = debug
+else
+    CFLAGS = $(RELEASE_FLAGS)
+    LIB_TARGET = all
+endif
+
 
 # Directories
 INCLUDES = -Iincludes -Ilibft/includes -IMacroLibX/includes
@@ -69,14 +67,9 @@ $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 libs:
-	@echo "$(BLUE)Building libraries...$(RESET)"
-	@$(MAKE) --no-print-directory -C libft
-	@$(MAKE) --no-print-directory -C MacroLibX
-
-debug_libs:
-	@echo "$(BLUE)Building libraries in debug mode...$(RESET)"
-	@$(MAKE) --no-print-directory -C libft debug
-	@$(MAKE) --no-print-directory -C MacroLibX debug
+	@echo "$(BLUE)Building libraries in $(MODE) mode...$(RESET)"
+	@$(MAKE) --no-print-directory -C libft $(LIB_TARGET)
+	@$(MAKE) --no-print-directory -C MacroLibX $(LIB_TARGET)
 
 $(NAME): $(OBJS) | libs
 	@echo "$(GREEN)Linking$(RESET) $@..."
@@ -101,5 +94,4 @@ bonus: all
 
 debug:
 	@echo "$(GREEN)Building in debug mode$(RESET)"
-	@$(MAKE) --no-print-directory -s debug_libs
-	@$(MAKE) --no-print-directory -s $(NAME) CFLAGS="$(DEBUG_FLAGS)"
+	@$(MAKE) --no-print-directory MODE=debug
