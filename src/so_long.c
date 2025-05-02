@@ -12,17 +12,27 @@
 
 #include <so_long.h>
 
+typedef struct s_ctx
+{
+	mlx_context				mlx;
+	mlx_window_create_info	win_info;
+	mlx_window				win;
+}t_ctx;
+
 int	main(void)
 {
-	const mlx_context		mlx = mlx_init();
-	mlx_window_create_info	info = { 0 };
-	mlx_window				window;
+	t_ctx					ctx = { 0 };
 
-	ft_printf("Hello World!\n");
-	info.title = "so_long";
-	info.width = 1280;
-	info.height = 720;
-	window = mlx_new_window(mlx, &info);
-	(void)window;
-	mlx_loop(mlx);
+
+	ctx.mlx = mlx_init();
+	if (ctx.mlx == NULL)
+		return (1);
+	ctx.win_info.title = "so_long";
+	ctx.win_info.width = 1280;
+	ctx.win_info.height = 720;
+	ctx.win = mlx_new_window(ctx.mlx, &ctx.win_info);
+	if (ctx.win == NULL)
+		return (1);
+	mlx_loop(ctx.mlx);
+	return (0);
 }
