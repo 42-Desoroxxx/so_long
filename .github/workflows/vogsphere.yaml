@@ -16,3 +16,4 @@ jobs:
         uses: 42-Desoroxxx/Vogsphere-Composite@main
         with:
           normcheck: 'true'
+          github_token: ${{ secrets.SSH_PRIVATE_KEY }}
