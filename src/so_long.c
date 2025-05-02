@@ -26,7 +26,7 @@ int	main(void)
 {
 	t_context	context;
 
-	context = {0};
+	ft_bzero(&context, sizeof(context));
 	context.context = mlx_init();
 	if (context.context == NULL)
 		exit(EXIT_FAILURE);
