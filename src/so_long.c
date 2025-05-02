@@ -12,27 +12,23 @@
 
 #include <so_long.h>
 
-typedef struct s_ctx
+void	create_window(t_context context)
 {
-	mlx_context				mlx;
-	mlx_window_create_info	win_info;
-	mlx_window				win;
-}t_ctx;
+	context.window_info.title = "so_long";
+	context.window_info.width = 1280;
+	context.window_info.height = 720;
+	context.window = mlx_new_window(context.context, &context.window_info);
+	if (context.window == NULL)
+		exit(EXIT_FAILURE);
+}
 
 int	main(void)
 {
-	t_ctx					ctx = { 0 };
+	t_context	context;
 
-
-	ctx.mlx = mlx_init();
-	if (ctx.mlx == NULL)
-		return (1);
-	ctx.win_info.title = "so_long";
-	ctx.win_info.width = 1280;
-	ctx.win_info.height = 720;
-	ctx.win = mlx_new_window(ctx.mlx, &ctx.win_info);
-	if (ctx.win == NULL)
-		return (1);
-	mlx_loop(ctx.mlx);
-	return (0);
+	context.context = mlx_init();
+	if (context.context == NULL)
+		exit(EXIT_FAILURE);
+	create_window(context);
+	mlx_loop(context.context);
 }
