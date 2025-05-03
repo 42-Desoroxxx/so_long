@@ -15,5 +15,6 @@ jobs:
       - name: Vogsphere Composite
         uses: 42-Desoroxxx/Vogsphere-Composite@main
         with:
+          make: 'false'
           normcheck: 'true'
           github_token: ${{ secrets.SSH_PRIVATE_KEY }}
