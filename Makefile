@@ -50,10 +50,10 @@ LDFLAGS = -lSDL2
 # Directories
 SRC = src
 OBJ = obj
-INCLUDES = -Iincludes $(foreach lib,$(LIB_DIRS),-I$(lib)/includes)
+INCLUDES = -Iincludes $(foreach lib,$(LIB_DIRS),-I$(lib)/includes) $(shell sdl2-config --cflags)
 
 # Sources
-SRC_FILES := so_long.c
+SRC_FILES := so_long.c hooks.c
 SRCS := $(addprefix $(SRC)/,$(SRC_FILES))
 OBJS := $(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(SRCS))
 

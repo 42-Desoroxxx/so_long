@@ -6,7 +6,7 @@
 /*   By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 13:38:46 by llage             #+#    #+#             */
-/*   Updated: 2025/04/30 19:21:39 by llage            ###   ########.fr       */
+/*   Updated: 2025/05/04 09:23:51 by llage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ void	create_window(t_context context)
 		exit(EXIT_FAILURE);
 }
 
+void	cleanup(t_context context)
+{
+	mlx_destroy_window(context.context, context.window);
+	mlx_destroy_context(context.context);
+}
+
 int	main(void)
 {
 	t_context	context;
@@ -30,6 +36,12 @@ int	main(void)
 	context.context = mlx_init();
 	if (context.context == NULL)
 		exit(EXIT_FAILURE);
+	mlx_on_event(context.context, context.window, MLX_WINDOW_EVENT, window_hook,
+		context.context);
+	mlx_on_event(context.context, context.window, MLX_KEYDOWN, key_down_hook,
+		context.context);
 	create_window(context);
+	mlx_add_loop_hook(context.context, loop_hook, &context);
 	mlx_loop(context.context);
+	cleanup(context);
 }

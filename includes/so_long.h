@@ -16,6 +16,7 @@
 # include <libft.h>
 # include <ft_printf.h>
 # include <mlx.h>
+# include <SDL_scancode.h>
 
 typedef struct s_context
 {
@@ -23,5 +24,9 @@ typedef struct s_context
 	mlx_window_create_info	window_info;
 	mlx_window				window;
 }	t_context;
+
+void	window_hook(int event, void* param);
+void	key_down_hook(int key, void* param);
+void	loop_hook(void* param);
 
 #endif
