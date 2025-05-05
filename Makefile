@@ -53,7 +53,9 @@ OBJ = obj
 INCLUDES = -Iincludes $(foreach lib,$(LIB_DIRS),-I$(lib)/includes) $(shell sdl2-config --cflags)
 
 # Sources
-SRC_FILES := so_long.c hooks.c
+SRC_FILES := so_long.c hooks.c utils/error_utils.c parsing/map_parser.c \
+	utils/parsing_utils.c parsing/map_checker.c utils/free_utils.c \
+	utils/map_utils.c parsing/map_flood.c
 SRCS := $(addprefix $(SRC)/,$(SRC_FILES))
 OBJS := $(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(SRCS))
 

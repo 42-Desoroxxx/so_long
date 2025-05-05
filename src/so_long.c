@@ -28,20 +28,23 @@ void	cleanup(t_context context)
 	mlx_destroy_context(context.context);
 }
 
-int	main(void)
+int	main(int argc, char *argv[])
 {
 	t_context	context;
 
-	ft_bzero(&context, sizeof(context));
-	context.context = mlx_init();
-	if (context.context == NULL)
-		exit(EXIT_FAILURE);
-	mlx_on_event(context.context, context.window, MLX_WINDOW_EVENT, window_hook,
-		context.context);
-	mlx_on_event(context.context, context.window, MLX_KEYDOWN, key_down_hook,
-		context.context);
-	create_window(context);
-	mlx_add_loop_hook(context.context, loop_hook, &context);
-	mlx_loop(context.context);
-	cleanup(context);
+	if (argc != 2)
+		fatal_error("Must provide a path to a map file");
+	parse_map(open_map(argv[1]));
+	// ft_bzero(&context, sizeof(context));
+	// context.context = mlx_init();
+	// if (context.context == NULL)
+	// 	exit(EXIT_FAILURE);
+	// mlx_on_event(context.context, context.window, MLX_WINDOW_EVENT, window_hook,
+	// 	context.context);
+	// mlx_on_event(context.context, context.window, MLX_KEYDOWN, key_down_hook,
+	// 	context.context);
+	// create_window(context);
+	// mlx_add_loop_hook(context.context, loop_hook, &context);
+	// mlx_loop(context.context);
+	// cleanup(context);
 }
