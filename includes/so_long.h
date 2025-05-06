@@ -31,7 +31,6 @@ typedef struct s_context
 	mlx_context				context;
 	mlx_window_create_info	window_info;
 	mlx_window				window;
-	char					**map;
 	t_vector_2i				player;
 	int						moves;
 	int						collectible_left;
@@ -40,6 +39,7 @@ typedef struct s_context
 	void					*texture_wall;
 	void					*texture_exit_closed;
 	void					*texture_exit_open;
+	char					**map;
 }	t_context;
 
 // Utils
@@ -57,7 +57,7 @@ t_vector_2i		get_player(char **map);
 
 // Parsing
 
-void			parse_map(int fd, t_context context);
+void			parse_map(int fd, t_context *context);
 int				check_map(char **map);
 
 // Hooks

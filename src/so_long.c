@@ -12,27 +12,27 @@
 
 #include <so_long.h>
 
-void	create_window(t_context context)
+void	create_window(t_context *context)
 {
-	context.window_info.title = "so_long";
-	context.window_info.width = 1280;
-	context.window_info.height = 720;
-	context.window = mlx_new_window(context.context, &context.window_info);
-	if (context.window == NULL)
+	context->window_info.title = "so_long";
+	context->window_info.width = 1280;
+	context->window_info.height = 720;
+	context->window = mlx_new_window(context->context, &context->window_info);
+	if (context->window == NULL)
 		exit(EXIT_FAILURE);
 }
 
-void	create_textures(t_context context)
+void	create_textures(t_context *context)
 {
-	context.texture_player = mlx_new_image_from_file(context.context,
+	context->texture_player = mlx_new_image_from_file(context->context,
 			"textures/player.png", 0, 0);
-	context.texture_collectible = mlx_new_image_from_file(context.context,
+	context->texture_collectible = mlx_new_image_from_file(context->context,
 			"textures/collectible.png", 0, 0);
-	context.texture_wall = mlx_new_image_from_file(context.context,
+	context->texture_wall = mlx_new_image_from_file(context->context,
 			"textures/wall.png", 0, 0);
-	context.texture_exit_closed = mlx_new_image_from_file(context.context,
+	context->texture_exit_closed = mlx_new_image_from_file(context->context,
 			"textures/exit_closed.png", 0, 0);
-	context.texture_exit_open = mlx_new_image_from_file(context.context,
+	context->texture_exit_open = mlx_new_image_from_file(context->context,
 			"textures/exit_open.png", 0, 0);
 }
 
@@ -54,21 +54,21 @@ int	main(int argc, char *argv[])
 	if (argc != 2)
 		fatal_error("Must provide a path to a map file");
 	ft_bzero(&context, sizeof(context));
-	parse_map(open_map(argv[1]), context);
+	parse_map(open_map(argv[1]), &context);
 	context.context = mlx_init();
 	if (context.context == NULL)
 	{
 		free_map(context.map);
 		exit(EXIT_FAILURE);
 	}
-	create_textures(context);
+	create_textures(&context);
+	create_window(&context);
 	mlx_on_event(context.context, context.window, MLX_WINDOW_EVENT,
-		window_hook, context.context);
+		window_hook, &context);
 	mlx_on_event(context.context, context.window, MLX_KEYDOWN,
-		key_down_hook, context.context);
+		key_down_hook, &context);
 	mlx_set_fps_goal(context.context, 24);
 	context.player = get_player(context.map);
-	create_window(context);
 	mlx_add_loop_hook(context.context, loop_hook, &context);
 	mlx_loop(context.context);
 	free_map(context.map);

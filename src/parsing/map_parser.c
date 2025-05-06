@@ -70,12 +70,12 @@ static char	**read_map(const int fd)
 	return (map);
 }
 
-void	parse_map(const int fd, t_context context)
+void	parse_map(const int fd, t_context *context)
 {
 	char	**map;
 
 	map = read_map(fd);
 	close(fd);
-	context.collectible_left = check_map(map);
-	context.map = map;
+	context->collectible_left = check_map(map);
+	context->map = map;
 }
