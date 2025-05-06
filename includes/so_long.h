@@ -6,7 +6,7 @@
 /*   By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/02 17:26:58 by llage             #+#    #+#             */
-/*   Updated: 2025/05/05 19:57:49 by llage            ###   ########.fr       */
+/*   Updated: 2025/05/06 04:26:40 by llage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,15 +38,18 @@ typedef struct s_vector_2i
 
 _Noreturn void	fatal_error(char *message);
 _Noreturn void	fatal_error_with_map(char *message, char **map);
+_Noreturn void	fatal_error_with_fd(char *message, int fd);
 int				open_map(char *path);
 void 			free_map(char **map);
+int				get_width(char **map);
+int				get_height(char **map);
 char			**copy_map(char **map);
-char			**validate_via_flood(char **map);
+void			validate_via_flood(char **map);
 t_vector_2i		get_player(char **map);
 
 // Parsing
 
-void			parse_map(int fd);
+char			**parse_map(int fd);
 void			check_map(char **map);
 
 // Hooks

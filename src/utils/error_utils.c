@@ -12,6 +12,13 @@
 
 #include <so_long.h>
 
+_Noreturn void	fatal_error_with_fd(char *message, int fd)
+{
+	close(fd);
+	ft_fprintf(STDERR_FILENO, "Error\n%s\n", message);
+	exit(EXIT_FAILURE);
+}
+
 _Noreturn void	fatal_error_with_map(char *message, char **map)
 {
 	free_map(map);

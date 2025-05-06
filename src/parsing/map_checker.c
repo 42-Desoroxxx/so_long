@@ -6,7 +6,7 @@
 /*   By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 22:59:27 by llage             #+#    #+#             */
-/*   Updated: 2025/05/05 23:20:35 by llage            ###   ########.fr       */
+/*   Updated: 2025/05/06 04:44:26 by llage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,25 +70,33 @@ static void	validate_rectangle(char **map)
 {
 	const size_t	length = ft_strlen(map[0]);
 	int				i;
+	int				j;
 
 	i = 0;
 	while (map[i])
 	{
 		if (ft_strlen(map[i]) != length)
 			fatal_error_with_map("Map is not a rectangle", map);
+		j = 0;
+		if (i == 0 || map[i + 1] == NULL)
+		{
+			while (map[i][j])
+			{
+				if (map[i][j] != '1')
+					fatal_error_with_map("Map outer layer is not fully walls",
+						map);
+				j++;
+			}
+		}
+		else if (map[i][get_width(map) - 1] != '1' || map[i][0] != '1')
+			fatal_error_with_map("Map outer layer is not fully walls", map);
 		i++;
 	}
 }
 
 void	check_map(char **map)
 {
-	char	**flooded_map;
-
 	validate_chars(map);
 	validate_rectangle(map);
-	flooded_map = validate_via_flood(map);
-
-	ft_printf("Flooded Map:\n");
-	for (size_t i = 0; i < ft_strlen((char *)flooded_map); i++)
-		ft_printf("%d:%s\n", i, flooded_map[i]);
+	validate_via_flood(map);
 }

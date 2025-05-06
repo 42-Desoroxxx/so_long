@@ -12,10 +12,34 @@
 
 #include <so_long.h>
 
-static char	**flood_fill(char **map, int x, int y, int height, int width)
+static void	check_and_fill(char **map, int x, int y, int *changes)
 {
-	char			**flooded_map;
-	int changes;
+	const int	direction_x[4] = {0, 1, 0, -1};
+	const int	direction_y[4] = {-1, 0, 1, 0};
+	int			new_x;
+	int			new_y;
+	int			i;
+
+	i = 0;
+	while (i < 4)
+	{
+		new_x = x + direction_x[i];
+		new_y = y + direction_y[i];
+		if (new_x >= 0 && new_x < get_width(map) && new_y >= 0
+			&& new_y < get_height(map) && (map[new_y][new_x] == '0'
+			|| map[new_y][new_x] == 'C' || map[new_y][new_x] == 'E'))
+		{
+			map[new_y][new_x] = 'P';
+			(*changes)++;
+		}
+		i++;
+	}
+}
+
+static char	**flood_fill(char **map, int x, int y)
+{
+	char	**flooded_map;
+	int		changes;
 
 	flooded_map = copy_map(map);
 	if (flooded_map == NULL)
@@ -24,46 +48,58 @@ static char	**flood_fill(char **map, int x, int y, int height, int width)
 	{
 		changes = 0;
 		y = 0;
-		while (y < height) {
+		while (y < get_height(flooded_map))
+		{
 			x = 0;
-			while (x < width) {
-				if (flooded_map[y][x] == 'P') {
-					if (y > 0 && (flooded_map[y-1][x] == '0' || flooded_map[y-1][x] == 'C' || flooded_map[y-1][x] == 'E')) {
-						flooded_map[y-1][x] = 'P';
-						changes++;
-					}
-					if (x < width-1 && (flooded_map[y][x+1] == '0' || flooded_map[y][x+1] == 'C' || flooded_map[y][x+1] == 'E')) {
-						flooded_map[y][x+1] = 'P';
-						changes++;
-					}
-					if (y < height-1 && (flooded_map[y+1][x] == '0' || flooded_map[y+1][x] == 'C' || flooded_map[y+1][x] == 'E')) {
-						flooded_map[y+1][x] = 'P';
-						changes++;
-					}
-					if (x > 0 && (flooded_map[y][x-1] == '0' || flooded_map[y][x-1] == 'C' || flooded_map[y][x-1] == 'E')) {
-						flooded_map[y][x-1] = 'P';
-						changes++;
-					}
-				}
+			while (x < ((int) ft_strlen(flooded_map[0])))
+			{
+				if (flooded_map[y][x] == 'P')
+					check_and_fill(flooded_map, x, y, &changes);
 				x++;
 			}
 			y++;
 		}
 		if (changes == 0)
-			break;
+			break ;
 	}
 	return (flooded_map);
 }
 
-char	**validate_via_flood(char **map)
+static void	validate_everything(char **map, char **flooded_map, int x, int y)
+{
+	while (y < get_height(flooded_map))
+	{
+		x = 0;
+		while (x < get_width(flooded_map))
+		{
+			if (flooded_map[y][x] == 'P' && (y == 0 || y == get_height(map) - 1
+				|| x == 0 || x == get_width(map) - 1))
+			{
+				free_map(flooded_map);
+				fatal_error_with_map("Map is not closed", map);
+			}
+			if (map[y][x] == 'E' && flooded_map[y][x] != 'P')
+			{
+				free_map(flooded_map);
+				fatal_error_with_map("Exit is not accessible", map);
+			}
+			if (map[y][x] == 'C' && flooded_map[y][x] != 'P')
+			{
+				free_map(flooded_map);
+				fatal_error_with_map("A collectible is not accessible", map);
+			}
+			x++;
+		}
+		y++;
+	}
+}
+
+void	validate_via_flood(char **map)
 {
 	const t_vector_2i	player = get_player(map);
 	char				**flooded_map;
 
-	if (player.x == -1 || player.y == -1)
-		fatal_error_with_map("Map does not contain a player", map);
-	flooded_map = flood_fill(map, player.x, player.y,
-		(int) ft_strlen((char *) map) - 1,
-		(int) ft_strlen((char *) map[0]));
-	return (flooded_map);
+	flooded_map = flood_fill(map, player.x, player.y);
+	validate_everything(map, flooded_map, 0, 0);
+	free_map(flooded_map);
 }

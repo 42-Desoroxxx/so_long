@@ -14,13 +14,14 @@
 
 static void	is_valid_extension(char *path)
 {
-	const char	*extension = ft_strchr(path, '.');
+	const char	*extension = ft_strrchr(path, '.');
 
 	if (extension == NULL)
 		fatal_error("Missing file extension, must be .ber");
 	if (ft_strncmp(extension, ".ber", 4) != 0)
 		fatal_error("Invalid file extension, must be `.ber`");
 }
+
 
 int	open_map(char *path)
 {

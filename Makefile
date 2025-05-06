@@ -33,7 +33,7 @@ RESET = \033[0m
 # Compiler
 CC = cc
 RELEASE_FLAGS = -Wall -Wextra -Werror -O3 -ffast-math -march=native -flto
-DEBUG_FLAGS = -Wall -Wextra -O0 -fno-builtin -g
+DEBUG_FLAGS = -Wall -Wextra -O0 -fno-builtin -g -fsanitize=address
 ifeq ($(MODE),debug)
     CFLAGS = $(DEBUG_FLAGS)
     LIB_TARGET = debug
