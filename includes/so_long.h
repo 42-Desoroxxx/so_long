@@ -20,19 +20,27 @@
 # include <SDL_scancode.h>
 # include <fcntl.h>
 
-typedef struct s_context
-{
-	mlx_context				context;
-	mlx_window_create_info	window_info;
-	mlx_window				window;
-}	t_context;
-
 typedef struct s_vector_2i
 {
 	int x;
 	int y;
 }	t_vector_2i;
 
+typedef struct s_context
+{
+	mlx_context				context;
+	mlx_window_create_info	window_info;
+	mlx_window				window;
+	char					**map;
+	t_vector_2i				player;
+	int						moves;
+	int						collectible_left;
+	void					*texture_player;
+	void					*texture_collectible;
+	void					*texture_wall;
+	void					*texture_exit_closed;
+	void					*texture_exit_open;
+}	t_context;
 
 // Utils
 
@@ -49,8 +57,8 @@ t_vector_2i		get_player(char **map);
 
 // Parsing
 
-char			**parse_map(int fd);
-void			check_map(char **map);
+void			parse_map(int fd, t_context context);
+int				check_map(char **map);
 
 // Hooks
 

@@ -22,8 +22,27 @@ void	create_window(t_context context)
 		exit(EXIT_FAILURE);
 }
 
+void	create_textures(t_context context)
+{
+	context.texture_player = mlx_new_image_from_file(context.context,
+			"textures/player.png", 0, 0);
+	context.texture_collectible = mlx_new_image_from_file(context.context,
+			"textures/collectible.png", 0, 0);
+	context.texture_wall = mlx_new_image_from_file(context.context,
+			"textures/wall.png", 0, 0);
+	context.texture_exit_closed = mlx_new_image_from_file(context.context,
+			"textures/exit_closed.png", 0, 0);
+	context.texture_exit_open = mlx_new_image_from_file(context.context,
+			"textures/exit_open.png", 0, 0);
+}
+
 void	cleanup(t_context context)
 {
+	mlx_destroy_image(context.context, context.texture_player);
+	mlx_destroy_image(context.context, context.texture_collectible);
+	mlx_destroy_image(context.context, context.texture_wall);
+	mlx_destroy_image(context.context, context.texture_exit_closed);
+	mlx_destroy_image(context.context, context.texture_exit_open);
 	mlx_destroy_window(context.context, context.window);
 	mlx_destroy_context(context.context);
 }
@@ -31,26 +50,27 @@ void	cleanup(t_context context)
 int	main(int argc, char *argv[])
 {
 	t_context	context;
-	char		**map;
 
 	if (argc != 2)
 		fatal_error("Must provide a path to a map file");
-	map = parse_map(open_map(argv[1]));
 	ft_bzero(&context, sizeof(context));
+	parse_map(open_map(argv[1]), context);
 	context.context = mlx_init();
 	if (context.context == NULL)
 	{
-		free_map(map);
+		free_map(context.map);
 		exit(EXIT_FAILURE);
 	}
-	mlx_on_event(context.context, context.window, MLX_WINDOW_EVENT, window_hook,
-		context.context);
-	mlx_on_event(context.context, context.window, MLX_KEYDOWN, key_down_hook,
-		context.context);
-	mlx_set_fps_goal(context.context,24);
+	create_textures(context);
+	mlx_on_event(context.context, context.window, MLX_WINDOW_EVENT,
+		window_hook, context.context);
+	mlx_on_event(context.context, context.window, MLX_KEYDOWN,
+		key_down_hook, context.context);
+	mlx_set_fps_goal(context.context, 24);
+	context.player = get_player(context.map);
 	create_window(context);
 	mlx_add_loop_hook(context.context, loop_hook, &context);
 	mlx_loop(context.context);
-	free_map(map);
+	free_map(context.map);
 	cleanup(context);
 }

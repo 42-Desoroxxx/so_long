@@ -39,7 +39,7 @@ static int	count_char(const char c, char **map)
 	return (collectible);
 }
 
-static void	validate_chars(char **map)
+static int	validate_chars(char **map)
 {
 	int		collectible;
 	char	c;
@@ -64,6 +64,7 @@ static void	validate_chars(char **map)
 	count_char('F', map);
 	if (collectible < 1)
 		fatal_error_with_map("Map does not contain enough collectibles", map);
+	return (collectible);
 }
 
 static void	validate_rectangle(char **map)
@@ -94,9 +95,12 @@ static void	validate_rectangle(char **map)
 	}
 }
 
-void	check_map(char **map)
+int	check_map(char **map)
 {
-	validate_chars(map);
+	int	collectible;
+
+	collectible = validate_chars(map);
 	validate_rectangle(map);
 	validate_via_flood(map);
+	return (collectible);
 }

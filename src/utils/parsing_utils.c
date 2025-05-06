@@ -22,7 +22,6 @@ static void	is_valid_extension(char *path)
 		fatal_error("Invalid file extension, must be `.ber`");
 }
 
-
 int	open_map(char *path)
 {
 	int	fd;
