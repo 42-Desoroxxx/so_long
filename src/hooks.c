@@ -6,7 +6,7 @@
 /*   By: llage <llage@student.42angouleme.fr>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/04 08:29:15 by llage             #+#    #+#             */
-/*   Updated: 2025/05/06 18:53:41 by llage            ###   ########.fr       */
+/*   Updated: 2025/05/06 19:06:14 by llage            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,17 @@ void	key_down_hook(int key, void *param)
 	if (key == SDL_SCANCODE_ESCAPE)
 		mlx_loop_end(context->context);
 	else if (key == SDL_SCANCODE_W)
-		move_player((t_context *) context, context->player.x, context->player.y - 1);
+		move_player((t_context *) context, context->player.x,
+			context->player.y - 1);
 	else if (key == SDL_SCANCODE_A)
-		move_player((t_context *) context, context->player.x - 1, context->player.y);
+		move_player((t_context *) context, context->player.x - 1,
+			context->player.y);
 	else if (key == SDL_SCANCODE_S)
-		move_player((t_context *) context, context->player.x, context->player.y + 1);
+		move_player((t_context *) context, context->player.x,
+			context->player.y + 1);
 	else if (key == SDL_SCANCODE_D)
-		move_player((t_context *) context, context->player.x + 1, context->player.y);
+		move_player((t_context *) context, context->player.x + 1,
+			context->player.y);
 }
 
 static void	draw_tile(t_context *context, int y, int x)

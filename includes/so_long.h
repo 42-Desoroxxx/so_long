@@ -22,8 +22,8 @@
 
 typedef struct s_vector_2i
 {
-	int x;
-	int y;
+	int	x;
+	int	y;
 }	t_vector_2i;
 
 typedef struct s_context
@@ -48,7 +48,7 @@ _Noreturn void	fatal_error(char *message);
 _Noreturn void	fatal_error_with_map(char *message, char **map);
 _Noreturn void	fatal_error_with_fd(char *message, int fd);
 int				open_map(char *path);
-void 			free_map(char **map);
+void			free_map(char **map);
 int				get_width(char **map);
 int				get_height(char **map);
 char			**copy_map(char **map);
@@ -62,8 +62,8 @@ int				check_map(char **map);
 
 // Hooks
 
-void			window_hook(int event, void* param);
-void			key_down_hook(int key, void* param);
-void			loop_hook(void* param);
+void			window_hook(int event, void *param);
+void			key_down_hook(int key, void *param);
+void			loop_hook(void *param);
 
 #endif

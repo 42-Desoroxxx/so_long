@@ -19,7 +19,7 @@ void	create_window(t_context *context)
 	context->window_info.height = 720;
 	context->window = mlx_new_window(context->context, &context->window_info);
 	if (context->window == NULL)
-		exit(EXIT_FAILURE);
+		fatal_error_with_map("Unable to create window", context->map);
 }
 
 void	create_textures(t_context *context)
