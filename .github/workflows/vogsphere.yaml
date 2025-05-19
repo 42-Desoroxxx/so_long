@@ -1,20 +1,72 @@
 name: Vogsphere
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - main
+      - "**"
+  pull_request:
+    branches:
+      - "**"
+
+permissions:
+  contents: write
 
 jobs:
+  norminette:
+    name: Norminette
+    uses: ./.github/workflows/norminette.yaml
+
+  build_ubuntu_22_04:
+    name: Build on Ubuntu 22.04
+    uses: ./.github/workflows/build.yaml
+    with:
+      ubuntu-version: 22.04
+
+  build_ubuntu_latest:
+    name: Build on Ubuntu latest
+    uses: ./.github/workflows/build.yaml
+    with:
+      ubuntu-version: latest
+
   vogsphere:
+    name: Vogsphere
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    needs: [norminette, build_ubuntu_22_04, build_ubuntu_latest]
+    if: always()
     steps:
-      - name: Vogsphere Composite
-        uses: 42-Desoroxxx/Vogsphere-Composite@main
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          make: 'false'
-          normcheck: 'true'
-          github_token: ${{ secrets.SSH_PRIVATE_KEY }}
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Success
+        if: |
+          needs.norminette.result == 'success' &&
+          needs.build_ubuntu_22_04.result == 'success' &&
+          needs.build_ubuntu_latest.result == 'success'
+        run: |
+          echo "All checks passed. Updating Vogsphere branch with the latest commits."
+          git checkout -B vogsphere
+          rm -rf .gitignore .github/workflows/* libft/.github/workflows/*
+          git add -A
+          git commit -m "Ready for Vogsphere" || true
+          git push -f origin vogsphere
+
+        - name: Failure
+          if: |
+            needs.norminette.result != 'success' ||
+            needs.build_ubuntu_22_04.result != 'success' ||
+            needs.build_ubuntu_latest.result != 'success'
+          run: |
+            git checkout --orphan temp-empty-branch
+            git rm -rf .
+            git commit --allow-empty -m "Failed one or more checks"
+            git branch -D vogsphere || true
+            git branch -m vogsphere
+            git push -f origin vogsphere

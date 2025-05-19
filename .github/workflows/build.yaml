@@ -1,0 +1,25 @@
+name: Build
+on:
+  workflow_call:
+    inputs:
+      ubuntu-version:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build on Ubuntu ${{ inputs.ubuntu-version }}
+    runs-on: ubuntu-${{ inputs.ubuntu-version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev build-essential
+
+      - name: Build
+        run: make
