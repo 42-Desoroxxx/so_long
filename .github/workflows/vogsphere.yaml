@@ -53,10 +53,20 @@ jobs:
         run: |
           echo "All checks passed. Updating Vogsphere branch with the latest commits."
           git checkout -B vogsphere
+          
+          echo "Initializing and cloning submodules recursively..."
+          git submodule update --init --recursive
+          echo "Converting submodules to normal directories..."
+          git submodule foreach --recursive 'rm -rf .git'
+          rm -f .gitmodules
+          
+          echo "Remove all unwated files for Vogsphere..."
           rm -rf .gitignore .github/workflows/* libft/.github/workflows/*
+          
+          echo "Committing changes..."
           git add -A
           git commit -m "Ready for Vogsphere" || true
-            git push -f origin vogsphere
+          git push -f origin vogsphere
 
       - name: Failure
         if: |
