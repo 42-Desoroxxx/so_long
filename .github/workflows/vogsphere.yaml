@@ -62,6 +62,10 @@ jobs:
           rm -rf .git/modules/*
           git config -f .git/config --remove-section submodule || true
           rm -f .gitmodules
+          for submodule in $(git config --file .gitmodules --get-regexp path | awk '{ print $2 }'); do
+            rm -rf $submodule
+            git add $submodule
+          done
 
           echo "Remove all unwated files for Vogsphere..."
           rm -rf .gitignore .github/workflows/* libft/.github/workflows/*
