@@ -56,17 +56,17 @@ jobs:
           rm -rf .gitignore .github/workflows/* libft/.github/workflows/*
           git add -A
           git commit -m "Ready for Vogsphere" || true
-          git push -f origin vogsphere
-
-        - name: Failure
-          if: |
-            needs.norminette.result != 'success' ||
-            needs.build_ubuntu_22_04.result != 'success' ||
-            needs.build_ubuntu_latest.result != 'success'
-          run: |
-            git checkout --orphan temp-empty-branch
-            git rm -rf .
-            git commit --allow-empty -m "Failed one or more checks"
-            git branch -D vogsphere || true
-            git branch -m vogsphere
             git push -f origin vogsphere
+
+      - name: Failure
+        if: |
+          needs.norminette.result != 'success' ||
+          needs.build_ubuntu_22_04.result != 'success' ||
+          needs.build_ubuntu_latest.result != 'success'
+        run: |
+          git checkout --orphan temp-empty-branch
+          git rm -rf .
+          git commit --allow-empty -m "Failed one or more checks"
+          git branch -D vogsphere || true
+          git branch -m vogsphere
+          git push -f origin vogsphere
