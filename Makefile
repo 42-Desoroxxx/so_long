@@ -9,7 +9,7 @@
 # |  $$$$$$/|  $$$$$$/ /$$$$$$$$|  $$$$$$$      | $$ \/  | $$|  $$$$$$$| $$ \  $$|  $$$$$$$  #
 #  \______/  \______/ |________/ \____  $$      |__/     |__/ \_______/|__/  \__/ \_______/  #
 #                                /$$  | $$                                                   #
-#        )))                    |  $$$$$$/                                    Version 1.0    #
+#        )))                    |  $$$$$$/                                    Version 1.1    #
 #       (((                      \______/                                                    #
 #     +-----+                                   __..--''``---....___   _..._    __           #
 #     |     |]      /    //    // //  /// //_.-'    .-/";  `        ``<._  ``.''_ `. / // /  #
@@ -19,10 +19,10 @@
 #    / // / /// //  /// / / // //   //  /// //  /  ///  //  // /// / /  ///   /   / ///  //  #
 ##############################################################################################
 
-.PHONY: all debug clean fclean re re_debug bonus
+.PHONY: all debug clean clean_self fclean re re_debug sane re_sane bonus
 
 NAME = so_long
-MODE ?= release
+MAKE_MODE ?= release
 
 # Colors
 GREEN = \033[1;32m
@@ -32,14 +32,25 @@ RESET = \033[0m
 
 # Compiler
 CC = cc
-RELEASE_FLAGS = -Wall -Wextra -Werror -O3 -ffast-math -march=native -flto
-DEBUG_FLAGS = -Wall -Wextra -O0 -fno-builtin -g
-ifeq ($(MODE),debug)
-    CFLAGS = $(DEBUG_FLAGS)
-    LIB_TARGET = debug
-else
-    CFLAGS = $(RELEASE_FLAGS)
+BASE_FLAGS = -Wall -Wextra -Werror=vla
+RELEASE_FLAGS = -Werror -O3 -ffast-math -march=native -flto
+DEBUG_FLAGS =  -g -O0 -fno-builtin -mno-omit-leaf-frame-pointer -fno-omit-frame-pointer -fno-ipa-icf -fstrict-flex-arrays=3
+SANE_FLAGS = -fsanitize=address,pointer-compare,pointer-subtract,leak,undefined,shift,shift-exponent,shift-base,integer-divide-by-zero,unreachable,vla-bound,null,signed-integer-overflow,bounds,bounds-strict,alignment,object-size,float-divide-by-zero,float-cast-overflow,nonnull-attribute,returns-nonnull-attribute,bool,enum,pointer-overflow,builtin -fsanitize-address-use-after-scope
+ifeq ($(MAKE_MODE),release)
+	CFLAGS = $(BASE_FLAGS) $(RELEASE_FLAGS)
     LIB_TARGET = all
+else
+	ifeq ($(MAKE_MODE),debug)
+		CFLAGS = $(BASE_FLAGS) $(DEBUG_FLAGS)
+		LIB_TARGET = debug
+	else
+	 ifeq ($(MAKE_MODE),sane)
+	 	CFLAGS = $(BASE_FLAGS) $(DEBUG_FLAGS) $(SANE_FLAGS)
+	 	LIB_TARGET = sane
+	 else
+		$(error Unknown mode)
+		endif
+	endif
 endif
 
 # Libraries
@@ -59,11 +70,16 @@ SRC_FILES := so_long.c hooks.c utils/error_utils.c parsing/map_parser.c \
 SRCS := $(addprefix $(SRC)/,$(SRC_FILES))
 OBJS := $(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(SRCS))
 
-all: $(NAME)
+all:
+	@$(MAKE) -j --no-print-directory $(NAME)
 
 debug:
 	@echo "$(GREEN)Building in debug mode$(RESET)"
-	@$(MAKE) --no-print-directory MODE=debug
+	@$(MAKE) -j --no-print-directory MAKE_MODE=debug
+
+sane:
+	@echo "$(GREEN)Building in sane mode$(RESET)"
+	@$(MAKE) -j --no-print-directory MAKE_MODE=sane
 
 $(OBJ):
 	@mkdir -p $@ $(dir $(OBJS))
@@ -73,9 +89,13 @@ $(OBJ)/%.o: $(SRC)/%.c | $(OBJ)
 	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 libs:
-	@echo "$(BLUE)Building libraries in $(MODE) mode...$(RESET)"
+	@echo "$(BLUE)Building libraries in $(MAKE_MODE) mode...$(RESET)"
 	@for lib in $(LIB_DIRS); do \
-		$(MAKE) --no-print-directory -C $$lib $(LIB_TARGET); \
+		if [ "$(LIB_TARGET)" = "sane" ] && [ "$$lib" != "libft" ]; then \
+			$(MAKE) -j --no-print-directory -C $$lib debug; \
+		else \
+			$(MAKE) -j --no-print-directory -C $$lib $(LIB_TARGET); \
+		fi; \
 	done
 
 $(NAME): $(OBJS) | libs
@@ -83,22 +103,29 @@ $(NAME): $(OBJS) | libs
 	@$(CC) $(CFLAGS) $(OBJS) $(LIB_FILES) -o $@ $(LDFLAGS)
 	@echo "$(GREEN)Successfully compiled $(NAME)!$(RESET)"
 
-clean:
+clean_self:
 	@echo "$(RED)Cleaning$(RESET) $(NAME)'s object files..."
 	@rm -rf $(OBJ)
+
+clean: clean_self
 	@for lib in $(LIB_DIRS); do \
 		$(MAKE) --no-print-directory -s -C $$lib clean; \
 	done
 
-fclean: clean
+fclean: clean_self
 	@echo "$(RED)Removing$(RESET) $(NAME)..."
 	@rm -f $(NAME)
 	@for lib in $(LIB_DIRS); do \
 		$(MAKE) --no-print-directory -s -C $$lib fclean; \
 	done
 
-re: fclean all
+re: fclean
+	@$(MAKE) -j --no-print-directory all
 
-re_debug: fclean debug
+re_debug: fclean
+	@$(MAKE) -j --no-print-directory debug
+
+re_sane: fclean
+	@$(MAKE) -j --no-print-directory sane
 
 bonus: all
