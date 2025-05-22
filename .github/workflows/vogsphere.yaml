@@ -56,10 +56,16 @@ jobs:
 
           echo "Initializing and cloning submodules recursively..."
           git submodule update --init --recursive
+          
+          git submodule foreach --recursive '
+            echo "Processing submodule at $path"
+            git -C "$toplevel" rm --cached "$path"
+            rm -rf ".git"
+            git -C "$toplevel" add "$path"
+          '
 
           echo "Converting submodules to normal directories..."
           rm -f .gitmodules
-          git rm --cached
 
           echo "Remove all unwated files for Vogsphere..."
           rm -rf .gitignore .github/workflows/* libft/.github/workflows/*
