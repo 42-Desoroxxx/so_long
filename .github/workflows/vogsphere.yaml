@@ -59,6 +59,7 @@ jobs:
 
           echo "Converting submodules to normal directories..."
           rm -f .gitmodules
+          git rm --cached
 
           echo "Remove all unwated files for Vogsphere..."
           rm -rf .gitignore .github/workflows/* libft/.github/workflows/*
