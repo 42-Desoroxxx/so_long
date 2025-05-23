@@ -18,9 +18,11 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       ubuntu-version: 22.04
+      sdl: true
 
   build_ubuntu_latest:
     name: Build on Ubuntu latest
     uses: ./.github/workflows/build.yaml
     with:
       ubuntu-version: latest
+      sdl: true
