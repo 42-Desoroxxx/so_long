@@ -5,6 +5,9 @@ on:
       ubuntu-version:
         required: true
         type: string
+      sdl2:
+        required: false
+        default: false
 
 jobs:
   build:
@@ -16,10 +19,10 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install dependencies
+      - name: Install SDL2
+        if: ${{ inputs.sdl2 == 'true' }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev build-essential
+          sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev
 
       - name: Build
         run: make
