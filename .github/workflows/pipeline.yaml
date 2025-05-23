@@ -1,4 +1,4 @@
-name: Vogsphere
+name: Pipeline
 
 on:
   push:
@@ -7,9 +7,6 @@ on:
   pull_request:
     branches:
       - "**"
-
-permissions:
-  contents: write
 
 jobs:
   norminette:
@@ -27,4 +24,3 @@ jobs:
     uses: ./.github/workflows/build.yaml
     with:
       ubuntu-version: latest
-      
