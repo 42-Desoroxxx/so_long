@@ -13,8 +13,8 @@ jobs:
       - name: Install Norminette
         shell: bash
         run: |
-          python3 -m pip install --upgrade pip setuptools >/dev/null 2>&1
-          python3 -m pip install norminette >/dev/null 2>&1
+          python3 -m pip install --upgrade pip setuptools
+          python3 -m pip install norminette
 
       - name: Run Norminette
         shell: bash
