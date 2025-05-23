@@ -25,8 +25,9 @@ jobs:
 
       - name: Install SDL2
         if: ${{ inputs.sdl == true }}
-        run: |
-          sudo apt-get install -y libsdl2-2.0-0 libsdl2-dev
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: libsdl2-2.0-0 libsdl2-dev
 
       - name: Build
         run: make
