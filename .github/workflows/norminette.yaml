@@ -13,7 +13,7 @@ jobs:
       - name: Install Norminette
         shell: bash
         run: |
-          python3 -m pip install norminette
+          sudo python3 -m pip install norminette
 
       - name: Run Norminette
         shell: bash
